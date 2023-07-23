@@ -11,6 +11,7 @@ import {
 
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
+import { useRouter } from "next/navigation";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -52,13 +53,13 @@ const New = () => {
   const [gridLayout, setGridLayout] = useState({
     lg: defaultLayout,
   });
-
+  const router = useRouter()
   const [dashboardName, setDashboardName] = useState("");
   const [dashboardId, setDashboardId] = useState("");
   const icons = [FaRegSmile, FaRegSadTear, FaRegGrinSquint, FaRegDizzy];
 
   useEffect(() => {
-      const newDashboardId = generateId();
+    const newDashboardId = generateId();
     setDashboardId(newDashboardId);
   }, []);
 
@@ -142,6 +143,7 @@ const New = () => {
             Save My Dashboard
           </button>
         </form>
+        <button onClick={()=>{router.push('/')}} className="bg-red-500 ml-2 text-white font-bold py-1 my-2 px-4  hover:bg-red-800 ">Back</button>
       </div>
 
       <div className="flex h-100 justify-center items-center">

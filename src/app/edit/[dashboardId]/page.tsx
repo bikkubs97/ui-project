@@ -12,7 +12,7 @@ const ResponsiveGridLayout = WidthProvider(Responsive);
 
 const EditDashboard = () => {
 
-
+  const router = useRouter()
   const {dashboardId}  =  useParams();
   console.log(dashboardId)
 
@@ -118,12 +118,13 @@ const EditDashboard = () => {
     localStorage.setItem("dashboards", JSON.stringify(savedDashboards));
     localStorage.setItem("cell_sizes", JSON.stringify(sizeData));
     alert("Dashboard updated!")
+    
   };
 
   return (
     <>
       <div className="w-full bg-blue-950 px-5 py-2">
-      <form onSubmit={() => handleLayoutChange(gridLayout.lg, gridLayout)} className="flex p-2 w-full px-10">
+      <form onSubmit={() => handleLayoutChange(gridLayout.lg, gridLayout)} className="flex p-2 w-full ">
         <label htmlFor="name" className="text-white m-2 font-bold mb-2">
           Name
         </label>
@@ -143,8 +144,12 @@ const EditDashboard = () => {
         >
           Save My Dashboard
         </button>
-      </form>
-      </div>
+        <button type="button" onClick={()=>{router.push('/')}} className="bg-red-500 ml-2 text-white font-bold py-2 px-4  hover:bg-red-800 ">Back</button>
+        </form>
+        </div>
+      
+     
+    
 
       <div className="flex h-100 justify-center items-center">
         <div className="w-3/4 p-4 mt-4">
