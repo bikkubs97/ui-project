@@ -1,5 +1,6 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { graphContext } from "../layout";
 import { Responsive, WidthProvider } from "react-grid-layout";
 import Chart from "react-google-charts";
 import {
@@ -15,41 +16,16 @@ import { useRouter } from "next/navigation";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
-const defaultLayout = [
-  { i: "1", x: 0, y: 0, w: 1, h: 1 },
-  { i: "2", x: 1, y: 0, w: 1, h: 1 },
-  { i: "3", x: 0, y: 1, w: 1, h: 1 },
-  { i: "4", x: 1, y: 1, w: 1, h: 1 },
-];
-
-const defaultCellSizes = {
-  "1": { w: 1, h: 1 },
-  "2": { w: 1, h: 1 },
-  "3": { w: 1, h: 1 },
-  "4": { w: 1, h: 1 },
-};
-
 const New = () => {
-  const data = [
-    ["Sector", "Intensity"],
-    ["Sector 1", 60],
-    ["Sector 2", 30],
-    ["Sector 3", 70],
-    ["Sector 4", 40],
-  ];
-
-  const countryData = [
-    ["Country", "Intensity"],
-    ["USA", 10],
-    ["Canada", 20],
-    ["Russia", 10],
-    ["Brazil", 6],
-    ["Australia", 15],
-    ["Algeria", 10],
-    ["India", 20],
-    ["South Africa", 15],
-  ];
-
+ 
+  const graphData = useContext(graphContext)
+  const defaultLayout = [
+    { i: "1", x: 0, y: 0, w: 1, h: 1 },
+    { i: "2", x: 1, y: 0, w: 1, h: 1 },
+    { i: "3", x: 0, y: 1, w: 1, h: 1 },
+    { i: "4", x: 1, y: 1, w: 1, h: 1 },
+  ];  
+  
   const [gridLayout, setGridLayout] = useState({
     lg: defaultLayout,
   });
@@ -68,23 +44,21 @@ const New = () => {
   };
 
   const handleSaveDashboard = (e) => {
-    e.preventDefault();
-
-    // Add the current date to the dashboard data
+    e.preventDefault()
     const currentDate = new Date();
-    const formattedDate = currentDate.toISOString().split("T")[0];
+    const formattedDate = currentDate.toISOString().split("T")[0]
 
     const dashboardData = {
       id: dashboardId,
       name: dashboardName,
       date: formattedDate,
-      icon: icons[Math.floor(Math.random() * icons.length)].name, // Add the icon here if available
+      icon: icons[Math.floor(Math.random() * icons.length)].name, 
       layout: gridLayout,
     };
 
     // Get the existing dashboards data from localStorage
     const savedDashboards =
-      JSON.parse(localStorage.getItem("dashboards")) || [];
+      JSON.parse(localStorage.getItem("dashboards")) || []
 
     // Update the existing data with the new dashboard data
     const updatedDashboards = [...savedDashboards, dashboardData];
@@ -98,7 +72,6 @@ const New = () => {
   const handleLayoutChange = (layout, layouts) => {
     // Save the new layout and cell sizes to localStorage
     setGridLayout(layouts);
-
     const sizeData = {};
     layout.forEach((item) => {
       sizeData[item.i] = { w: item.w, h: item.h };
@@ -169,7 +142,7 @@ const New = () => {
                   width={"100%"}
                   height={"100%"}
                   chartType="PieChart"
-                  data={data}
+                  data={graphData.data}
                   options={{
                     title: "Sector and Intensity",
                     colors: [
@@ -193,7 +166,7 @@ const New = () => {
                   width={"100%"}
                   height={"100%"}
                   chartType="BarChart"
-                  data={data}
+                  data={graphData.data}
                   style={{ border: "1px solid #0077e6" }}
                   options={{
                     title: "Sector and Intensity",
@@ -209,7 +182,7 @@ const New = () => {
                   chartType="ScatterChart"
                   width="100%"
                   height="100%"
-                  data={data}
+                  data={graphData.data}
                   style={{ border: "1px solid #0077e6" }}
                   options={{
                     title:
@@ -233,7 +206,7 @@ const New = () => {
                   height={"100%"}
                   chartType="GeoChart"
                   style={{ border: "1px solid #0077e6" }}
-                  data={countryData}
+                  data={graphData.countryData}
                   options={{
                     title: "Countries-Intensity",
                     colorAxis: {
