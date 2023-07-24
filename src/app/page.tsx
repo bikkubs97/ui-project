@@ -1,6 +1,7 @@
-"use client";
+"use client"
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
+import ConfirmationModal from './modal';
 
 import {
   FaRegSmile,
@@ -9,7 +10,11 @@ import {
   FaRegDizzy,
 } from "react-icons/fa";
 
-type IconType = "FaRegSmile" | "FaRegSadTear" | "FaRegGrinSquint" | "FaRegDizzy";
+type IconType =
+  | "FaRegSmile"
+  | "FaRegSadTear"
+  | "FaRegGrinSquint"
+  | "FaRegDizzy";
 
 interface DashboardData {
   id: string;
@@ -27,6 +32,26 @@ const iconMap = {
 
 export default function Overview() {
   const [data, setData] = useState<DashboardData[]>([]);
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [deleteRowId, setDeleteRowId] = useState('');
+
+  const deleteRow = (id: string) => {
+    setDeleteRowId(id);
+    setModalOpen(true);
+  };
+
+  const handleCancelDelete = () => {
+    setModalOpen(false);
+    setDeleteRowId('');
+  };
+
+  const handleConfirmDelete = () => {
+    const updatedData = data.filter((row) => row.id !== deleteRowId);
+    setData(updatedData);
+    localStorage.setItem("dashboards", JSON.stringify(updatedData));
+    setModalOpen(false);
+    setDeleteRowId('');
+  };
 
   useEffect(() => {
     const savedDashboardsString = localStorage.getItem("dashboards");
@@ -35,21 +60,8 @@ export default function Overview() {
       setData(savedDashboards);
     }
   }, []);
-  
-  const deleteRow = (id:string) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this dashboard?"
-    );
-    if (!confirmDelete) {
-      return;
-    }
 
-    const updatedData = data.filter((row) => row.id !== id);
-    setData(updatedData);
-    localStorage.setItem("dashboards", JSON.stringify(updatedData));
-  };
-
-  const renderIcon = (icon:IconType) => {
+  const renderIcon = (icon: IconType) => {
     const IconComponent = iconMap[icon];
     if (IconComponent) {
       return <IconComponent size={24} color="#0077e6" />;
@@ -108,6 +120,12 @@ export default function Overview() {
           Add New Dashboard
         </button>
       </Link>
+      {/* Render the confirmation modal */}
+      <ConfirmationModal
+        isOpen={isModalOpen}
+        onCancel={handleCancelDelete}
+        onConfirm={handleConfirmDelete}
+      />
     </>
   );
 }
