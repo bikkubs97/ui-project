@@ -1,3 +1,4 @@
+"use client"
 import React, { useState, useEffect, useContext } from "react";
 import { graphContext, GraphData } from "../layout";
 import { Responsive, WidthProvider, Layout } from "react-grid-layout";

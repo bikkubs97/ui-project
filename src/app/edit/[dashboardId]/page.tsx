@@ -1,6 +1,7 @@
+"use client"
 import React, { useState, useEffect, useContext } from "react";
-import { useRouter } from "next/router";
-import { useParams } from "next/router";
+import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { Responsive, WidthProvider, Layout } from "react-grid-layout";
 import { graphContext, GraphData } from "@/app/layout";
 import Chart from "react-google-charts";
