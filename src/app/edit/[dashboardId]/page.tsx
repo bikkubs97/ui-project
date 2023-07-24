@@ -11,7 +11,7 @@ import "react-resizable/css/styles.css";
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 interface DashboardData {
-  id: string;
+  id: string| string[];
   name: string;
   date: string;
   layout: { lg: Layout[] };
