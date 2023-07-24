@@ -85,7 +85,7 @@ const EditDashboard: React.FC = () => {
 
   return (
     <>
-      <div className="w-full bg-blue-950 px-5 py-2">
+      <div className="w-full bg-blue-950 px-5 py-2 ">
         <form
           onSubmit={() => handleLayoutChange(gridLayout.lg, gridLayout)}
           className="flex p-2 w-full "
@@ -105,7 +105,7 @@ const EditDashboard: React.FC = () => {
           />
           <button
             type="submit"
-            className="bg-blue-500 ml-2 text-white font-bold py-2 px-4  hover:bg-blue-800"
+            className="bg-blue-500 ml-2 text-white font-bold py-2 px-4 hover:bg-blue-800"
           >
             Save My Dashboard
           </button>
@@ -121,9 +121,9 @@ const EditDashboard: React.FC = () => {
         </form>
       </div>
 
-      <div className="flex h-100 justify-center items-center">
+      <div className="flex h-100 w-full justify-center items-center">
         <div className="w-3/4 p-4 mt-4">
-          <p>Drag the corners to resize, Click and drag to move</p>
+          <p>click and drag the bottom-right corners to resize, Click and drag to move</p>
           <div className="w-100 h-80 p-4 ">
             <ResponsiveGridLayout
               className="layout"

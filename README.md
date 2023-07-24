@@ -9,7 +9,7 @@ Create New Dashboard:
 
 Clicking on "Add new dashboard" takes the user to a page where they can start creating a new dashboard.
 Users can drag and drop different charts onto the dashboard canvas to position them as desired.
-Additionally, they can resize the charts by dragging the bottom left corners of the charts.
+Additionally, they can resize the charts by clicking and dragging the bottom right corners of the charts.
 After customizing the dashboard with charts, the user can provide a name for the dashboard.
 Once the user is satisfied with their customization, they can save the dashboard.
 

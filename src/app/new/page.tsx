@@ -129,7 +129,7 @@ const New: React.FC = () => {
 
       <div className="flex h-100 justify-center items-center">
         <div className="w-3/4 p-4 mt-4">
-          <p>Click and drag to move, and drag the corners to resize</p>
+          <p>Click and drag to move, click and drag the bottom-right corners to resize</p>
           <div className="w-100 h-80 ">
             <ResponsiveGridLayout
               className="layout"
