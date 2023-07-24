@@ -1,10 +1,9 @@
 "use client";
 import "./globals.css";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import React from "react";
-export const graphContext = React.createContext();
-const inter = Inter({ subsets: ["latin"] });
+
+export const graphContext = React.createContext<GraphData | null>(null);
 
 export const metadata: Metadata = {
   title: "UI Dashboard",
@@ -25,6 +24,11 @@ export default function RootLayout({
   );
 }
 
+export interface GraphData {
+  data: Array<Array<string | number>>;
+  countryData: Array<Array<string | number>>;
+}
+
 const graphData = {
   data: [
     ["Sector", "Intensity"],
@@ -43,6 +47,5 @@ const graphData = {
     ["Algeria", 10],
     ["India", 20],
     ["South Africa", 15],
-  ]
-  
+  ],
 };

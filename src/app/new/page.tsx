@@ -1,7 +1,6 @@
-"use client";
 import React, { useState, useEffect, useContext } from "react";
-import { graphContext } from "../layout";
-import { Responsive, WidthProvider } from "react-grid-layout";
+import { graphContext, GraphData } from "../layout";
+import { Responsive, WidthProvider, Layout } from "react-grid-layout";
 import Chart from "react-google-charts";
 import {
   FaRegSmile,
@@ -9,29 +8,27 @@ import {
   FaRegGrinSquint,
   FaRegDizzy,
 } from "react-icons/fa";
-
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
-const New = () => {
- 
-  const graphData = useContext(graphContext)
-  const defaultLayout = [
+const New: React.FC = () => {
+  const graphData = useContext<GraphData | null>(graphContext);
+  const defaultLayout: Layout[] = [
     { i: "1", x: 0, y: 0, w: 1, h: 1 },
     { i: "2", x: 1, y: 0, w: 1, h: 1 },
     { i: "3", x: 0, y: 1, w: 1, h: 1 },
     { i: "4", x: 1, y: 1, w: 1, h: 1 },
-  ];  
-  
-  const [gridLayout, setGridLayout] = useState({
+  ];
+
+  const [gridLayout, setGridLayout] = useState<{ lg: Layout[] }>({
     lg: defaultLayout,
   });
-  const router = useRouter()
-  const [dashboardName, setDashboardName] = useState("");
-  const [dashboardId, setDashboardId] = useState("");
+  const router = useRouter();
+  const [dashboardName, setDashboardName] = useState<string>("");
+  const [dashboardId, setDashboardId] = useState<string>("");
   const icons = [FaRegSmile, FaRegSadTear, FaRegGrinSquint, FaRegDizzy];
 
   useEffect(() => {
@@ -39,40 +36,43 @@ const New = () => {
     setDashboardId(newDashboardId);
   }, []);
 
-  const generateId = () => {
+  const generateId = (): string => {
     return Math.random().toString(36).substr(2, 9);
   };
 
-  const handleSaveDashboard = (e) => {
-    e.preventDefault()
+  const handleSaveDashboard = (e: React.FormEvent<HTMLFormElement>): void => {
+    e.preventDefault();
     const currentDate = new Date();
-    const formattedDate = currentDate.toISOString().split("T")[0]
-
+    const formattedDate = currentDate.toISOString().split("T")[0];
+    interface DashboardData {
+      id: string;
+      name: string;
+      date: string;
+      icon: string;
+      layout: { lg: Layout[] };
+    }
     const dashboardData = {
       id: dashboardId,
       name: dashboardName,
       date: formattedDate,
-      icon: icons[Math.floor(Math.random() * icons.length)].name, 
+      icon: icons[Math.floor(Math.random() * icons.length)].name,
       layout: gridLayout,
     };
 
-    // Get the existing dashboards data from localStorage
-    const savedDashboards =
-      JSON.parse(localStorage.getItem("dashboards")) || []
-
-    // Update the existing data with the new dashboard data
+    const savedDashboards: DashboardData[] = JSON.parse(
+      localStorage.getItem("dashboards") ?? "[]"
+    );
     const updatedDashboards = [...savedDashboards, dashboardData];
-
-    // Save the updated dashboards array back to localStorage
     localStorage.setItem("dashboards", JSON.stringify(updatedDashboards));
-
-    alert("Dashboard saved successully!");
+    alert("Dashboard saved successfully!");
   };
 
-  const handleLayoutChange = (layout, layouts) => {
-    // Save the new layout and cell sizes to localStorage
+  const handleLayoutChange = (
+    layout: Layout[],
+    layouts: { lg: Layout[] }
+  ): void => {
     setGridLayout(layouts);
-    const sizeData = {};
+    const sizeData: { [key: string]: { w: number; h: number } } = {};
     layout.forEach((item) => {
       sizeData[item.i] = { w: item.w, h: item.h };
     });
@@ -116,7 +116,14 @@ const New = () => {
             Save My Dashboard
           </button>
         </form>
-        <button onClick={()=>{router.push('/')}} className="bg-red-500 ml-2 text-white font-bold py-1 my-2 px-4  hover:bg-red-800 ">Back</button>
+        <button
+          onClick={() => {
+            router.push("/");
+          }}
+          className="bg-red-500 ml-2 text-white font-bold py-1 my-2 px-4  hover:bg-red-800 "
+        >
+          Back
+        </button>
       </div>
 
       <div className="flex h-100 justify-center items-center">
@@ -142,7 +149,7 @@ const New = () => {
                   width={"100%"}
                   height={"100%"}
                   chartType="PieChart"
-                  data={graphData.data}
+                  data={graphData?.data || []}
                   options={{
                     title: "Sector and Intensity",
                     colors: [
@@ -166,7 +173,7 @@ const New = () => {
                   width={"100%"}
                   height={"100%"}
                   chartType="BarChart"
-                  data={graphData.data}
+                  data={graphData?.data || []}
                   style={{ border: "1px solid #0077e6" }}
                   options={{
                     title: "Sector and Intensity",
@@ -182,7 +189,7 @@ const New = () => {
                   chartType="ScatterChart"
                   width="100%"
                   height="100%"
-                  data={graphData.data}
+                  data={graphData?.data || []}
                   style={{ border: "1px solid #0077e6" }}
                   options={{
                     title:
@@ -206,7 +213,7 @@ const New = () => {
                   height={"100%"}
                   chartType="GeoChart"
                   style={{ border: "1px solid #0077e6" }}
-                  data={graphData.countryData}
+                  data={graphData?.countryData || []}
                   options={{
                     title: "Countries-Intensity",
                     colorAxis: {

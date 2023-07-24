@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
 
@@ -9,6 +9,15 @@ import {
   FaRegDizzy,
 } from "react-icons/fa";
 
+type IconType = "FaRegSmile" | "FaRegSadTear" | "FaRegGrinSquint" | "FaRegDizzy";
+
+interface DashboardData {
+  id: string;
+  icon: IconType;
+  name: string;
+  date: string;
+}
+
 const iconMap = {
   FaRegSmile: FaRegSmile,
   FaRegSadTear: FaRegSadTear,
@@ -17,16 +26,17 @@ const iconMap = {
 };
 
 export default function Overview() {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<DashboardData[]>([]);
 
   useEffect(() => {
-    const savedDashboards = JSON.parse(localStorage.getItem("dashboards"));
-    if (savedDashboards) {
+    const savedDashboardsString = localStorage.getItem("dashboards");
+    if (savedDashboardsString) {
+      const savedDashboards = JSON.parse(savedDashboardsString);
       setData(savedDashboards);
     }
   }, []);
-
-  const deleteRow = (id) => {
+  
+  const deleteRow = (id:string) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this dashboard?"
     );
@@ -39,14 +49,11 @@ export default function Overview() {
     localStorage.setItem("dashboards", JSON.stringify(updatedData));
   };
 
-  const renderIcon = (icon) => {
-    // Check if the icon string exists in the iconMap
+  const renderIcon = (icon:IconType) => {
     const IconComponent = iconMap[icon];
     if (IconComponent) {
-      // Return the corresponding icon component
       return <IconComponent size={24} color="#0077e6" />;
     } else {
-      // Return a default icon if the icon string is not found
       return <FaRegSmile size={24} color="#0077e6" />;
     }
   };
@@ -83,10 +90,9 @@ export default function Overview() {
                   >
                     Delete
                   </button>
-                  
                 </td>
                 <td>
-                  <Link href={`/edit/${row.id}`}> 
+                  <Link href={`/edit/${row.id}`}>
                     <button className="px-4 py-2 bg-blue-500 hover:bg-blue-800 text-white rounded-md">
                       Edit
                     </button>

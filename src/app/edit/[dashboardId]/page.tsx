@@ -1,71 +1,78 @@
-"use client";
-import { useRouter } from "next/navigation";
-import { useParams } from "next/navigation";
-import { useState, useEffect, useContext } from "react";
-import { Responsive, WidthProvider } from "react-grid-layout";
-import { graphContext } from "@/app/layout";
+import React, { useState, useEffect, useContext } from "react";
+import { useRouter } from "next/router";
+import { useParams } from "next/router";
+import { Responsive, WidthProvider, Layout } from "react-grid-layout";
+import { graphContext, GraphData } from "@/app/layout";
 import Chart from "react-google-charts";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
-const EditDashboard = () => {
+interface DashboardData {
+  id: string;
+  name: string;
+  date: string;
+  layout: { lg: Layout[] };
+}
+
+const EditDashboard: React.FC = () => {
   const router = useRouter();
   const { dashboardId } = useParams();
 
-  const graphData = useContext(graphContext);
+  const graphData = useContext<GraphData | null>(graphContext);
 
-  const [dashboardName, setDashboardName] = useState("");
-  const [gridLayout, setGridLayout] = useState(null);
+  const [dashboardName, setDashboardName] = useState<string>("");
+  const [gridLayout, setGridLayout] = useState<{ lg: Layout[] } | null>(null);
 
   useEffect(() => {
-    const savedDashboards = JSON.parse(localStorage.getItem("dashboards"));
-    if (savedDashboards) {
-      const dashboard = savedDashboards.find(
-        (dashboard) => dashboard.id === dashboardId
-      );
-      if (dashboard) {
-        const { name, layout } = dashboard;
-        setDashboardName(name);
-        setGridLayout(layout);
-      } else {
-        console.log("Dashboard Data not found for id:", dashboardId);
-      }
+    const savedDashboards: DashboardData[] = JSON.parse(
+      localStorage.getItem("dashboards") || "[]"
+    );
+
+    const dashboard = savedDashboards.find(
+      (dashboard) => dashboard.id === dashboardId
+    );
+
+    if (dashboard) {
+      const { name, layout } = dashboard;
+      setDashboardName(name);
+      setGridLayout(layout);
     } else {
-      console.log("No Dashboards found in localStorage.");
+      console.log("Dashboard Data not found for id:", dashboardId);
     }
   }, [dashboardId]);
 
   if (!gridLayout) {
-    return <div>Loading...</div>; 
+    return <div>Loading...</div>;
   }
 
-  const handleLayoutChange = (layout, layouts) => {
-    setGridLayout(layouts);
+  const handleLayoutChange = (layout: Layout[], layouts: { lg: Layout[] }): void => {
+    setGridLayout({ ...gridLayout, lg: layout });
 
-    const sizeData = {};
+    const sizeData: { [key: string]: { w: number; h: number } } = {};
     layout.forEach((item) => {
       sizeData[item.i] = { w: item.w, h: item.h };
     });
-
+    
     const currentDate = new Date();
     const formattedDate = currentDate.toISOString().split("T")[0];
 
-    const dashboardData = {
+    const dashboardData: DashboardData = {
       id: dashboardId,
       name: dashboardName,
       date: formattedDate,
-      layout: gridLayout,
+      layout: { lg: layout },
     };
 
-    const savedDashboards =
-      JSON.parse(localStorage.getItem("dashboards")) || [];
+    const savedDashboards: DashboardData[] = JSON.parse(
+      localStorage.getItem("dashboards") || "[]"
+    );
     const existingDashboardIndex = savedDashboards.findIndex(
       (dashboard) => dashboard.id === dashboardId
     );
 
-    if (existingDashboardIndex >= 0) {     
+    if (existingDashboardIndex >= 0) {
       savedDashboards[existingDashboardIndex] = dashboardData;
     } else {
       savedDashboards.push(dashboardData);
@@ -93,10 +100,10 @@ const EditDashboard = () => {
             placeholder="Enter name for your dashboard"
             value={dashboardName}
             onChange={(e) => setDashboardName(e.target.value)}
-            required 
+            required
           />
           <button
-            type="submit" 
+            type="submit"
             className="bg-blue-500 ml-2 text-white font-bold py-2 px-4  hover:bg-blue-800"
           >
             Save My Dashboard
@@ -134,11 +141,11 @@ const EditDashboard = () => {
                 <Chart
                   key={`chart-1-${gridLayout.lg[0].x}-${gridLayout.lg[0].y}`}
                   className="intensity"
-                  style={{ border: "1px solid #0077e6" }} 
+                  style={{ border: "1px solid #0077e6" }}
                   width={"100%"}
                   height={"100%"}
                   chartType="PieChart"
-                  data={graphData.data}
+                  data={graphData?.data || []}
                   options={{
                     title: "Sector and Intensity",
                     colors: [
@@ -158,11 +165,11 @@ const EditDashboard = () => {
               </div>
               <div key="2" className="bg-gray-300">
                 <Chart
-                  key={`chart-2-${gridLayout.lg[1].x}-${gridLayout.lg[1].y}`} 
+                  key={`chart-2-${gridLayout.lg[1].x}-${gridLayout.lg[1].y}`}
                   width={"100%"}
                   height={"100%"}
                   chartType="BarChart"
-                  data={graphData.data}
+                  data={graphData?.data || []}
                   style={{ border: "1px solid #0077e6" }}
                   options={{
                     title: "Sector and Intensity",
@@ -175,13 +182,12 @@ const EditDashboard = () => {
               <div key="3" className="bg-gray-400">
                 <Chart
                   chartType="ScatterChart"
-                  key={`chart-3-${gridLayout.lg[2].x}-${gridLayout.lg[2].y}`} 
+                  key={`chart-3-${gridLayout.lg[2].x}-${gridLayout.lg[2].y}`}
                   height="100%"
-                  data={graphData.data}
+                  data={graphData?.data || []}
                   style={{ border: "1px solid #0077e6" }}
                   options={{
-                    title:
-                      "Correlation between Region, Relevance and Intensity",
+                    title: "Correlation between Region, Relevance and Intensity",
                     hAxis: {
                       title: "Region",
                     },
@@ -196,12 +202,12 @@ const EditDashboard = () => {
               </div>
               <div key="4" className="bg-gray-500">
                 <Chart
-                  key={`chart-4-${gridLayout.lg[3].x}-${gridLayout.lg[3].y}`} 
+                  key={`chart-4-${gridLayout.lg[3].x}-${gridLayout.lg[3].y}`}
                   width={"100%"}
                   height={"100%"}
                   chartType="GeoChart"
                   style={{ border: "1px solid #0077e6" }}
-                  data={graphData.countryData}
+                  data={graphData?.countryData || []}
                   options={{
                     title: "Countries-Intensity",
                     colorAxis: {
