@@ -1,14 +1,9 @@
 "use client";
 import "./globals.css";
-import type { Metadata } from "next";
 import React from "react";
 
 export const graphContext = React.createContext<GraphData | null>(null);
 
-export const metadata: Metadata = {
-  title: "UI Dashboard",
-  description: "customizable dashboards",
-};
 
 export default function RootLayout({
   children,
