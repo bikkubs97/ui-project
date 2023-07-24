@@ -11,7 +11,7 @@ import {
 } from "react-icons/fa";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
