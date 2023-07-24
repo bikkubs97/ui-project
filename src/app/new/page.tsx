@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useState, useEffect, useContext } from "react";
 import { graphContext, GraphData } from "../layout";
 import { Responsive, WidthProvider, Layout } from "react-grid-layout";
@@ -12,6 +12,7 @@ import {
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -87,6 +88,10 @@ const New: React.FC = () => {
     localStorage.setItem(dashboardId, JSON.stringify(dashboardData));
     localStorage.setItem("cell_sizes", JSON.stringify(sizeData));
   };
+    const handleCellDelete = (cellId: string): void => {
+    const updatedLayout = gridLayout.lg.filter((item) => item.i !== cellId);
+    setGridLayout({ lg: updatedLayout });
+  };
 
   return (
     <>
@@ -129,7 +134,10 @@ const New: React.FC = () => {
 
       <div className="flex h-100 justify-center items-center">
         <div className="w-3/4 p-4 mt-4">
-          <p>Click and drag to move, click and drag the bottom-right corners to resize</p>
+          <p>
+            Click and drag to move, click and drag the bottom-right corners to
+            resize
+          </p>
           <div className="w-100 h-80 ">
             <ResponsiveGridLayout
               className="layout"
@@ -142,101 +150,110 @@ const New: React.FC = () => {
               containerPadding={[10, 10]}
               onLayoutChange={handleLayoutChange}
             >
-              <div key="1" className="bg-gray-200 p-0">
-                <Chart
-                  key={`chart-1-${gridLayout.lg[0].x}-${gridLayout.lg[0].y}`}
-                  className="intensity"
-                  style={{ border: "1px solid #0077e6" }}
-                  width={"100%"}
-                  height={"100%"}
-                  chartType="PieChart"
-                  data={graphData?.data || []}
-                  options={{
-                    title: "Sector and Intensity",
-                    colors: [
-                      "#b3ccff",
-                      "#cce0ff",
-                      "#99c2ff",
-                      "#66a3ff",
-                      "#3385ff",
-                      "#0066ff",
-                      "#0052cc",
-                      "#003d99",
-                      "#002966",
-                    ],
-                  }}
-                  rootProps={{ "data-testid": "1" }}
-                />
-              </div>
-              <div key="2" className="bg-gray-300">
-                <Chart
-                  key={`chart-2-${gridLayout.lg[1].x}-${gridLayout.lg[1].y}`}
-                  width={"100%"}
-                  height={"100%"}
-                  chartType="BarChart"
-                  data={graphData?.data || []}
-                  style={{ border: "1px solid #0077e6" }}
-                  options={{
-                    title: "Sector and Intensity",
-                    chartArea: { width: "50%" },
-                    hAxis: { title: "Intensity", minValue: 0, maxValue: 100 },
-                    vAxis: { title: "Sector" },
-                  }}
-                />
-              </div>
-              <div key="3" className="bg-gray-400">
-                <Chart
-                  key={`chart-3-${gridLayout.lg[2].x}-${gridLayout.lg[2].y}`}
-                  chartType="ScatterChart"
-                  width="100%"
-                  height="100%"
-                  data={graphData?.data || []}
-                  style={{ border: "1px solid #0077e6" }}
-                  options={{
-                    title:
-                      "Correlation between Region, Relevance and Intensity",
-                    hAxis: {
-                      title: "Region",
-                    },
-                    vAxis: {
-                      title: "Relevance",
-                    },
-                    legend: {
-                      position: "none",
-                    },
-                  }}
-                />
-              </div>
-              <div key="4" className="bg-gray-500">
-                <Chart
-                  key={`chart-4-${gridLayout.lg[3].x}-${gridLayout.lg[3].y}`}
-                  width={"100%"}
-                  height={"100%"}
-                  chartType="GeoChart"
-                  style={{ border: "1px solid #0077e6" }}
-                  data={graphData?.countryData || []}
-                  options={{
-                    title: "Countries-Intensity",
-                    colorAxis: {
-                      colors: [
-                        "#e6f2ff",
-                        "#b3d1ff",
-                        "#80bfff",
-                        "#4da6ff",
-                        "#1a8cff",
-                        "#0077e6",
-                        "#005cb3",
-                        "#004080",
-                      ],
-                      minValue: 0,
-                      maxValue: 12,
-                    },
-                  }}
-                  rootProps={{ "data-testid": "1" }}
-                />
-              </div>
+              {gridLayout.lg.map((item) => (
+                <div key={item.i} className="relative">
+                  <button
+                    className="bg-red-500 absolute top-0 left-0 z-10 m-1 px-2"
+                    onClick={() => handleCellDelete(item.i)}
+                  >
+                    X
+                  </button>
+                  {item.i === "1" && (
+                    <Chart
+                      key={`chart-${item.i}-${item.x}-${item.y}`}
+                      className="intensity"
+                      style={{ border: "1px solid #0077e6" }}
+                      width={"100%"}
+                      height={"100%"}
+                      chartType="PieChart"
+                      data={graphData?.data || []}
+                      options={{
+                        title: "Sector and Intensity",
+                        colors: [
+                          "#b3ccff",
+                          "#cce0ff",
+                          "#99c2ff",
+                          "#66a3ff",
+                          "#3385ff",
+                          "#0066ff",
+                          "#0052cc",
+                          "#003d99",
+                          "#002966",
+                        ],
+                      }}
+                      rootProps={{ "data-testid": item.i }}
+                    />
+                  )}
+                  {item.i === "2" && (
+                    <Chart
+                      key={`chart-${item.i}-${item.x}-${item.y}`}
+                      width={"100%"}
+                      height={"100%"}
+                      chartType="BarChart"
+                      data={graphData?.data || []}
+                      style={{ border: "1px solid #0077e6" }}
+                      options={{
+                        title: "Sector and Intensity",
+                        chartArea: { width: "50%" },
+                        hAxis: { title: "Intensity", minValue: 0, maxValue: 100 },
+                        vAxis: { title: "Sector" },
+                      }}
+                    />
+                  )}
+                  {item.i === "3" && (
+                    <Chart
+                      key={`chart-${item.i}-${item.x}-${item.y}`}
+                      chartType="ScatterChart"
+                      width="100%"
+                      height="100%"
+                      data={graphData?.data || []}
+                      style={{ border: "1px solid #0077e6" }}
+                      options={{
+                        title: "Correlation between Region, Relevance and Intensity",
+                        hAxis: {
+                          title: "Region",
+                        },
+                        vAxis: {
+                          title: "Relevance",
+                        },
+                        legend: {
+                          position: "none",
+                        },
+                      }}
+                    />
+                  )}
+                  {item.i === "4" && (
+                    <Chart
+                      key={`chart-${item.i}-${item.x}-${item.y}`}
+                      width={"100%"}
+                      height={"100%"}
+                      chartType="GeoChart"
+                      style={{ border: "1px solid #0077e6" }}
+                      data={graphData?.countryData || []}
+                      options={{
+                        title: "Countries-Intensity",
+                        colorAxis: {
+                          colors: [
+                            "#e6f2ff",
+                            "#b3d1ff",
+                            "#80bfff",
+                            "#4da6ff",
+                            "#1a8cff",
+                            "#0077e6",
+                            "#005cb3",
+                            "#004080",
+                          ],
+                          minValue: 0,
+                          maxValue: 12,
+                        },
+                      }}
+                      rootProps={{ "data-testid": item.i }}
+                    />
+                  )}
+                </div>
+              ))}
             </ResponsiveGridLayout>
-          </div>
+                        </div>
         </div>
       </div>
     </>
