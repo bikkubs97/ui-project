@@ -1,12 +1,11 @@
 "use client";
-// New.tsx
-// New.tsx
+
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { graphContext, GraphData } from "../layout";
 import { Responsive, WidthProvider, Layout } from "react-grid-layout";
 import Chart from "react-google-charts";
 import html2canvas from "html2canvas";
-import ConfirmationModal from "../widgetModel"; // Import the ConfirmationModal component
+import ConfirmationModal from "@/app/widgetModal";
 
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
@@ -120,11 +119,8 @@ const New: React.FC = () => {
   };
 
   const handleConfirmDelete = (): void => {
-    // Remove the cell with the selectedCellId from the grid layout
     const updatedLayout = gridLayout.lg.filter((item) => item.i !== selectedCellId);
     setGridLayout({ lg: updatedLayout });
-
-    // Close the confirmation modal
     setShowConfirmationModal(false);
   };
 
