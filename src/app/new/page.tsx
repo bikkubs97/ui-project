@@ -9,7 +9,7 @@ import {
   FaRegGrinSquint,
   FaRegDizzy,
 } from "react-icons/fa";
-import html2canvas from "html2canvas"; // Import html2canvas
+import html2canvas from "html2canvas";
 
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
@@ -43,16 +43,14 @@ const New: React.FC = () => {
     return Math.random().toString(36).substr(2, 9);
   };
 
-  // Ref to capture snapshot of grid layout container
   const gridLayoutRef = useRef<HTMLDivElement>(null);
 
-  // Function to capture snapshot of grid layout as image
   const captureSnapshot = async (): Promise<string | undefined> => {
     if (!gridLayoutRef.current) return undefined;
 
     try {
       const canvas = await html2canvas(gridLayoutRef.current, {
-        scale: 1, // Increase scale for higher quality (optional)
+        scale: 1,
       });
       return canvas.toDataURL("image/png");
     } catch (error) {
@@ -67,8 +65,7 @@ const New: React.FC = () => {
     e.preventDefault();
     const currentDate = new Date();
     const formattedDate = currentDate.toISOString().split("T")[0];
-
-    const snapshot = await captureSnapshot(); // Capture the snapshot of the grid layout
+    const snapshot = await captureSnapshot();
 
     interface DashboardData {
       id: string;
@@ -121,11 +118,8 @@ const New: React.FC = () => {
 
   return (
     <>
-      <div className="flex w-full bg-blue-950 px-5 py-2"  >
-        <form
-          onSubmit={handleSaveDashboard}
-          className="flex p-2 w-full"
-        >
+      <div className="flex w-full bg-blue-950 px-5 py-2">
+        <form onSubmit={handleSaveDashboard} className="flex p-2 w-full">
           <label htmlFor="name" className="text-white m-2 font-bold mb-2">
             Name
           </label>
@@ -155,14 +149,17 @@ const New: React.FC = () => {
         </button>
       </div>
 
-      <div className="flex h-100 justify-center items-center" ref={gridLayoutRef}>
-        <div className="w-3/4 p-4 mt-4" >
+      <div
+        className="flex h-100 justify-center items-center"
+        ref={gridLayoutRef}
+      >
+        <div className="w-3/4 p-4 mt-4">
           <p>
             Click and drag to move, click and drag the bottom-right corners to
             resize
           </p>
           <div className="w-100 h-80 ">
-            <ResponsiveGridLayout 
+            <ResponsiveGridLayout
               className="layout"
               layouts={gridLayout}
               breakpoints={{ lg: 1200 }}
@@ -218,7 +215,11 @@ const New: React.FC = () => {
                       options={{
                         title: "Sector and Intensity",
                         chartArea: { width: "50%" },
-                        hAxis: { title: "Intensity", minValue: 0, maxValue: 100 },
+                        hAxis: {
+                          title: "Intensity",
+                          minValue: 0,
+                          maxValue: 100,
+                        },
                         vAxis: { title: "Sector" },
                       }}
                     />
@@ -232,7 +233,8 @@ const New: React.FC = () => {
                       data={graphData?.data || []}
                       style={{ border: "1px solid #0077e6" }}
                       options={{
-                        title: "Correlation between Region, Relevance and Intensity",
+                        title:
+                          "Correlation between Region, Relevance and Intensity",
                         hAxis: {
                           title: "Region",
                         },

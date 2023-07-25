@@ -44,14 +44,10 @@ export default function Overview() {
     }
   }, []);
 
-  const renderIcon = (icon: string) => {
-    
-    return <img src={icon} alt="Dashboard Icon" width="300" height="250" />
-    
+  const renderIcon = (icon: string) => {    
+    return <img src={icon} alt="Dashboard Icon" width="300" height="250" />    
   };
   
-
-
   return (
     <>
       <h1 className="text-4xl text-white bg-blue-900 p-4">
@@ -102,7 +98,6 @@ export default function Overview() {
           Add New Dashboard
         </button>
       </Link>
-      {/* Render the confirmation modal */}
       <ConfirmationModal
         isOpen={isModalOpen}
         onCancel={handleCancelDelete}
