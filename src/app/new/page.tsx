@@ -3,12 +3,6 @@ import React, { useState, useEffect, useContext, useRef } from "react";
 import { graphContext, GraphData } from "../layout";
 import { Responsive, WidthProvider, Layout } from "react-grid-layout";
 import Chart from "react-google-charts";
-import {
-  FaRegSmile,
-  FaRegSadTear,
-  FaRegGrinSquint,
-  FaRegDizzy,
-} from "react-icons/fa";
 import html2canvas from "html2canvas";
 
 import "react-grid-layout/css/styles.css";
@@ -32,7 +26,6 @@ const New: React.FC = () => {
   const router = useRouter();
   const [dashboardName, setDashboardName] = useState<string>("");
   const [dashboardId, setDashboardId] = useState<string>("");
-  const icons = [FaRegSmile, FaRegSadTear, FaRegGrinSquint, FaRegDizzy];
 
   useEffect(() => {
     const newDashboardId = generateId();
@@ -79,7 +72,7 @@ const New: React.FC = () => {
       id: dashboardId,
       name: dashboardName,
       date: formattedDate,
-      icon: snapshot || icons[Math.floor(Math.random() * icons.length)].name,
+      icon: snapshot || "",
       layout: gridLayout,
     };
 
