@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useState, useEffect, useContext } from "react";
 import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
@@ -11,8 +11,9 @@ import "react-resizable/css/styles.css";
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 interface DashboardData {
-  id: string| string[];
+  id: string | string[];
   name: string;
+   icon: string;
   date: string;
   layout: { lg: Layout[] };
 }
@@ -48,20 +49,24 @@ const EditDashboard: React.FC = () => {
     return <div>Loading...</div>;
   }
 
-  const handleLayoutChange = (layout: Layout[], layouts: { lg: Layout[] }): void => {
+  const handleLayoutChange = (
+    layout: Layout[],
+    layouts: { lg: Layout[] }
+  ): void => {
     setGridLayout({ ...gridLayout, lg: layout });
 
     const sizeData: { [key: string]: { w: number; h: number } } = {};
     layout.forEach((item) => {
       sizeData[item.i] = { w: item.w, h: item.h };
     });
-    
+
     const currentDate = new Date();
     const formattedDate = currentDate.toISOString().split("T")[0];
 
     const dashboardData: DashboardData = {
       id: dashboardId,
       name: dashboardName,
+      icon : icon,
       date: formattedDate,
       layout: { lg: layout },
     };
@@ -80,7 +85,6 @@ const EditDashboard: React.FC = () => {
     }
     localStorage.setItem("dashboards", JSON.stringify(savedDashboards));
     localStorage.setItem("cell_sizes", JSON.stringify(sizeData));
-   
   };
   const handleCellDelete = (cellId: string): void => {
     const updatedLayout = gridLayout.lg.filter((item) => item.i !== cellId);
@@ -112,7 +116,9 @@ const EditDashboard: React.FC = () => {
             required
           />
           <button
-            onClick={(e)=>{handleSave(e)}}
+            onClick={(e) => {
+              handleSave(e);
+            }}
             type="submit"
             className="bg-blue-500 ml-2 text-white font-bold py-2 px-4 hover:bg-blue-800"
           >
@@ -132,9 +138,12 @@ const EditDashboard: React.FC = () => {
 
       <div className="flex h-100 w-full justify-center items-center">
         <div className="w-3/4 p-4 mt-4">
-          <p>click and drag the bottom-right corners to resize, Click and drag to move</p>
+          <p>
+            click and drag the bottom-right corners to resize, Click and drag to
+            move
+          </p>
           <div className="w-100 h-80 p-4 ">
-          <ResponsiveGridLayout
+            <ResponsiveGridLayout
               className="layout"
               layouts={gridLayout}
               breakpoints={{ lg: 1200 }}
@@ -190,7 +199,11 @@ const EditDashboard: React.FC = () => {
                       options={{
                         title: "Sector and Intensity",
                         chartArea: { width: "50%" },
-                        hAxis: { title: "Intensity", minValue: 0, maxValue: 100 },
+                        hAxis: {
+                          title: "Intensity",
+                          minValue: 0,
+                          maxValue: 100,
+                        },
                         vAxis: { title: "Sector" },
                       }}
                     />
@@ -204,7 +217,8 @@ const EditDashboard: React.FC = () => {
                       data={graphData?.data || []}
                       style={{ border: "1px solid #0077e6" }}
                       options={{
-                        title: "Correlation between Region, Relevance and Intensity",
+                        title:
+                          "Correlation between Region, Relevance and Intensity",
                         hAxis: {
                           title: "Region",
                         },
