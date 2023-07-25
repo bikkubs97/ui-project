@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState, useEffect, useContext } from "react";
 import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
@@ -8,7 +9,7 @@ import Chart from "react-google-charts";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 import html2canvas from "html2canvas";
-
+import ConfirmationModal from "@/app/widgetModal";
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 interface DashboardData {
@@ -50,9 +51,23 @@ const EditDashboard: React.FC = () => {
     setGridLayout({ ...gridLayout, lg: layout });
   };
 
+  const [showConfirmationModal, setShowConfirmationModal] = useState<boolean>(false);
+  const [selectedCellId, setSelectedCellId] = useState<string>("");
+
   const handleCellDelete = (cellId: string): void => {
-    const updatedLayout = gridLayout?.lg.filter((item) => item.i !== cellId) || [];
+    setSelectedCellId(cellId);
+    setShowConfirmationModal(true);
+  };
+
+  const handleCancelDelete = (): void => {
+    setShowConfirmationModal(false);
+  };
+
+  const handleConfirmDelete = (): void => {
+    const updatedLayout = gridLayout?.lg.filter((item) => item.i !== selectedCellId) || [];
     setGridLayout({ lg: updatedLayout });
+
+    setShowConfirmationModal(false);
   };
 
   const handleSave = async (e: React.MouseEvent<HTMLButtonElement>): Promise<void> => {
@@ -143,7 +158,7 @@ const EditDashboard: React.FC = () => {
             onClick={() => {
               router.push("/");
             }}
-            className="bg-red-500 ml-2 text-white font-bold py-2 px-4  hover:bg-red-800 "
+            className="bg-red-500 ml-2 text-white font-bold py-2 px-4 hover:bg-red-800"
           >
             Back
           </button>
@@ -153,7 +168,7 @@ const EditDashboard: React.FC = () => {
       <div className="flex h-100 w-full justify-center items-center" id="grid-layout">
         <div className="w-3/4 p-4 mt-4">
           <p>click and drag the bottom-right corners to resize, Click and drag to move</p>
-          <div className="w-100 h-80 p-4 ">
+          <div className="w-100 h-80 p-4">
             <ResponsiveGridLayout
               className="layout"
               layouts={gridLayout}
@@ -228,8 +243,7 @@ const EditDashboard: React.FC = () => {
                       data={graphData?.data || []}
                       style={{ border: "1px solid #0077e6" }}
                       options={{
-                        title:
-                          "Correlation between Region, Relevance and Intensity",
+                        title: "Correlation between Region, Relevance and Intensity",
                         hAxis: {
                           title: "Region",
                         },
@@ -276,6 +290,12 @@ const EditDashboard: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <ConfirmationModal
+        isOpen={showConfirmationModal}
+        onCancel={handleCancelDelete}
+        onConfirm={handleConfirmDelete}
+      />
     </>
   );
 };
