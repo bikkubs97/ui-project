@@ -3,32 +3,15 @@ import Link from "next/link";
 import React, { useState, useEffect } from "react";
 import ConfirmationModal from './modal';
 
-import {
-  FaRegSmile,
-  FaRegSadTear,
-  FaRegGrinSquint,
-  FaRegDizzy,
-} from "react-icons/fa";
-
-type IconType =
-  | "FaRegSmile"
-  | "FaRegSadTear"
-  | "FaRegGrinSquint"
-  | "FaRegDizzy";
 
 interface DashboardData {
   id: string;
-  icon: IconType;
+  icon: string;
   name: string;
   date: string;
 }
 
-const iconMap = {
-  FaRegSmile: FaRegSmile,
-  FaRegSadTear: FaRegSadTear,
-  FaRegGrinSquint: FaRegGrinSquint,
-  FaRegDizzy: FaRegDizzy,
-};
+
 
 export default function Overview() {
   const [data, setData] = useState<DashboardData[]>([]);
@@ -61,14 +44,13 @@ export default function Overview() {
     }
   }, []);
 
-  const renderIcon = (icon: IconType) => {
-    const IconComponent = iconMap[icon];
-    if (IconComponent) {
-      return <IconComponent size={24} color="#0077e6" />;
-    } else {
-      return <FaRegSmile size={24} color="#0077e6" />;
-    }
+  const renderIcon = (icon: string) => {
+    
+    return <img src={icon} alt="Dashboard Icon" width="300" height="250" />
+    
   };
+  
+
 
   return (
     <>

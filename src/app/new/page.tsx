@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { graphContext, GraphData } from "../layout";
 import { Responsive, WidthProvider, Layout } from "react-grid-layout";
 import Chart from "react-google-charts";
@@ -9,10 +9,11 @@ import {
   FaRegGrinSquint,
   FaRegDizzy,
 } from "react-icons/fa";
+import html2canvas from "html2canvas"; // Import html2canvas
+
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -42,10 +43,33 @@ const New: React.FC = () => {
     return Math.random().toString(36).substr(2, 9);
   };
 
-  const handleSaveDashboard = (e: React.FormEvent<HTMLFormElement>): void => {
+  // Ref to capture snapshot of grid layout container
+  const gridLayoutRef = useRef<HTMLDivElement>(null);
+
+  // Function to capture snapshot of grid layout as image
+  const captureSnapshot = async (): Promise<string | undefined> => {
+    if (!gridLayoutRef.current) return undefined;
+
+    try {
+      const canvas = await html2canvas(gridLayoutRef.current, {
+        scale: 1, // Increase scale for higher quality (optional)
+      });
+      return canvas.toDataURL("image/png");
+    } catch (error) {
+      console.error("Error capturing snapshot:", error);
+      return undefined;
+    }
+  };
+
+  const handleSaveDashboard = async (
+    e: React.FormEvent<HTMLFormElement>
+  ): Promise<void> => {
     e.preventDefault();
     const currentDate = new Date();
     const formattedDate = currentDate.toISOString().split("T")[0];
+
+    const snapshot = await captureSnapshot(); // Capture the snapshot of the grid layout
+
     interface DashboardData {
       id: string;
       name: string;
@@ -53,11 +77,12 @@ const New: React.FC = () => {
       icon: string;
       layout: { lg: Layout[] };
     }
-    const dashboardData = {
+
+    const dashboardData: DashboardData = {
       id: dashboardId,
       name: dashboardName,
       date: formattedDate,
-      icon: icons[Math.floor(Math.random() * icons.length)].name,
+      icon: snapshot || icons[Math.floor(Math.random() * icons.length)].name,
       layout: gridLayout,
     };
 
@@ -88,19 +113,17 @@ const New: React.FC = () => {
     localStorage.setItem(dashboardId, JSON.stringify(dashboardData));
     localStorage.setItem("cell_sizes", JSON.stringify(sizeData));
   };
-    const handleCellDelete = (cellId: string): void => {
+
+  const handleCellDelete = (cellId: string): void => {
     const updatedLayout = gridLayout.lg.filter((item) => item.i !== cellId);
     setGridLayout({ lg: updatedLayout });
   };
 
   return (
     <>
-      <div className="flex w-full bg-blue-950 px-5 py-2">
+      <div className="flex w-full bg-blue-950 px-5 py-2"  >
         <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleSaveDashboard(e);
-          }}
+          onSubmit={handleSaveDashboard}
           className="flex p-2 w-full"
         >
           <label htmlFor="name" className="text-white m-2 font-bold mb-2">
@@ -132,14 +155,14 @@ const New: React.FC = () => {
         </button>
       </div>
 
-      <div className="flex h-100 justify-center items-center">
-        <div className="w-3/4 p-4 mt-4">
+      <div className="flex h-100 justify-center items-center" ref={gridLayoutRef}>
+        <div className="w-3/4 p-4 mt-4" >
           <p>
             Click and drag to move, click and drag the bottom-right corners to
             resize
           </p>
           <div className="w-100 h-80 ">
-            <ResponsiveGridLayout
+            <ResponsiveGridLayout 
               className="layout"
               layouts={gridLayout}
               breakpoints={{ lg: 1200 }}
@@ -253,7 +276,7 @@ const New: React.FC = () => {
                 </div>
               ))}
             </ResponsiveGridLayout>
-                        </div>
+          </div>
         </div>
       </div>
     </>

@@ -80,13 +80,17 @@ const EditDashboard: React.FC = () => {
     }
     localStorage.setItem("dashboards", JSON.stringify(savedDashboards));
     localStorage.setItem("cell_sizes", JSON.stringify(sizeData));
-    alert("Dashboard updated!");
+   
   };
   const handleCellDelete = (cellId: string): void => {
     const updatedLayout = gridLayout.lg.filter((item) => item.i !== cellId);
     setGridLayout({ lg: updatedLayout });
   };
 
+  const handleSave = (e: React.MouseEvent<HTMLFormElement>): void => {
+    e.preventDefault();
+    alert("Dashboard Updated");
+  };
   return (
     <>
       <div className="w-full bg-blue-950 px-5 py-2 ">
@@ -108,6 +112,7 @@ const EditDashboard: React.FC = () => {
             required
           />
           <button
+            onClick={(e)=>{handleSave(e)}}
             type="submit"
             className="bg-blue-500 ml-2 text-white font-bold py-2 px-4 hover:bg-blue-800"
           >

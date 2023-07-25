@@ -15,7 +15,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay flex w-full justify-center align-center absolute top-60">
+    <div className="modal-overlay flex w-full justify-center align-center fixed top-60">
       <div className="modal-content bg-white border-2 p-4">
         <p className="font-bold">Are you sure you want to delete this dashboard?</p>
         <div className="modal-buttons">
