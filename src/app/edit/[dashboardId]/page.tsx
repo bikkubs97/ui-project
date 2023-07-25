@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useState, useEffect, useContext } from "react";
 import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
@@ -7,12 +7,14 @@ import { graphContext, GraphData } from "@/app/layout";
 import Chart from "react-google-charts";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
+import html2canvas from "html2canvas";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 interface DashboardData {
-  id: string| string[];
+  id: string | string[];
   name: string;
+  icon: string;
   date: string;
   layout: { lg: Layout[] };
 }
@@ -44,26 +46,52 @@ const EditDashboard: React.FC = () => {
     }
   }, [dashboardId]);
 
-  if (!gridLayout) {
-    return <div>Loading...</div>;
-  }
-
   const handleLayoutChange = (layout: Layout[], layouts: { lg: Layout[] }): void => {
     setGridLayout({ ...gridLayout, lg: layout });
+  };
 
+  const handleCellDelete = (cellId: string): void => {
+    const updatedLayout = gridLayout?.lg.filter((item) => item.i !== cellId) || [];
+    setGridLayout({ lg: updatedLayout });
+  };
+
+  const handleSave = async (e: React.MouseEvent<HTMLButtonElement>): Promise<void> => {
+    e.preventDefault();
+    const snapshot = await captureSnapshot();
+    saveDashboardData(snapshot);
+    alert("Dashboard Updated");
+  };
+
+  const captureSnapshot = async (): Promise<string> => {
+    const gridLayoutRef = document.getElementById("grid-layout");
+    if (!gridLayoutRef) return "";
+
+    try {
+      const canvas = await html2canvas(gridLayoutRef, {
+        scale: 1,
+      });
+      return canvas.toDataURL("image/png");
+    } catch (error) {
+      console.error("Error capturing snapshot:", error);
+      return "";
+    }
+  };
+
+  const saveDashboardData = (snapshot: string): void => {
     const sizeData: { [key: string]: { w: number; h: number } } = {};
-    layout.forEach((item) => {
+    gridLayout?.lg.forEach((item) => {
       sizeData[item.i] = { w: item.w, h: item.h };
     });
-    
+
     const currentDate = new Date();
     const formattedDate = currentDate.toISOString().split("T")[0];
 
     const dashboardData: DashboardData = {
       id: dashboardId,
+      icon: snapshot,
       name: dashboardName,
       date: formattedDate,
-      layout: { lg: layout },
+      layout: { lg: gridLayout?.lg || [] },
     };
 
     const savedDashboards: DashboardData[] = JSON.parse(
@@ -80,24 +108,16 @@ const EditDashboard: React.FC = () => {
     }
     localStorage.setItem("dashboards", JSON.stringify(savedDashboards));
     localStorage.setItem("cell_sizes", JSON.stringify(sizeData));
-   
-  };
-  const handleCellDelete = (cellId: string): void => {
-    const updatedLayout = gridLayout.lg.filter((item) => item.i !== cellId);
-    setGridLayout({ lg: updatedLayout });
   };
 
-  const handleSave = (e: React.MouseEvent<HTMLFormElement>): void => {
-    e.preventDefault();
-    alert("Dashboard Updated");
-  };
+  if (!gridLayout) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <>
-      <div className="w-full bg-blue-950 px-5 py-2 ">
-        <form
-          onSubmit={() => handleLayoutChange(gridLayout.lg, gridLayout)}
-          className="flex p-2 w-full "
-        >
+      <div className="w-full bg-blue-950 px-5 py-2">
+        <form onSubmit={(e) => e.preventDefault()} className="flex p-2 w-full">
           <label htmlFor="name" className="text-white m-2 font-bold mb-2">
             Name
           </label>
@@ -112,8 +132,8 @@ const EditDashboard: React.FC = () => {
             required
           />
           <button
-            onClick={(e)=>{handleSave(e)}}
-            type="submit"
+            type="button"
+            onClick={handleSave}
             className="bg-blue-500 ml-2 text-white font-bold py-2 px-4 hover:bg-blue-800"
           >
             Save My Dashboard
@@ -130,11 +150,11 @@ const EditDashboard: React.FC = () => {
         </form>
       </div>
 
-      <div className="flex h-100 w-full justify-center items-center">
+      <div className="flex h-100 w-full justify-center items-center" id="grid-layout">
         <div className="w-3/4 p-4 mt-4">
           <p>click and drag the bottom-right corners to resize, Click and drag to move</p>
           <div className="w-100 h-80 p-4 ">
-          <ResponsiveGridLayout
+            <ResponsiveGridLayout
               className="layout"
               layouts={gridLayout}
               breakpoints={{ lg: 1200 }}
@@ -190,7 +210,11 @@ const EditDashboard: React.FC = () => {
                       options={{
                         title: "Sector and Intensity",
                         chartArea: { width: "50%" },
-                        hAxis: { title: "Intensity", minValue: 0, maxValue: 100 },
+                        hAxis: {
+                          title: "Intensity",
+                          minValue: 0,
+                          maxValue: 100,
+                        },
                         vAxis: { title: "Sector" },
                       }}
                     />
@@ -204,7 +228,8 @@ const EditDashboard: React.FC = () => {
                       data={graphData?.data || []}
                       style={{ border: "1px solid #0077e6" }}
                       options={{
-                        title: "Correlation between Region, Relevance and Intensity",
+                        title:
+                          "Correlation between Region, Relevance and Intensity",
                         hAxis: {
                           title: "Region",
                         },
