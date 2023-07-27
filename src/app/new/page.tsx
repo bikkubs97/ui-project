@@ -6,7 +6,6 @@ import { Responsive, WidthProvider, Layout } from "react-grid-layout";
 import Chart from "react-google-charts";
 import html2canvas from "html2canvas";
 import ConfirmationModal from "@/app/widgetModal";
-
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 import { useRouter } from "next/navigation";
@@ -15,13 +14,14 @@ const ResponsiveGridLayout = WidthProvider(Responsive);
 
 const New: React.FC = () => {
   const graphData = useContext<GraphData | null>(graphContext);
+  //x-coloumn
   const defaultLayout: Layout[] = [
     { i: "1", x: 0, y: 0, w: 1, h: 1 },
     { i: "2", x: 1, y: 0, w: 1, h: 1 },
     { i: "3", x: 0, y: 1, w: 1, h: 1 },
     { i: "4", x: 1, y: 1, w: 1, h: 1 },
   ];
-
+  //lg-break point
   const [gridLayout, setGridLayout] = useState<{ lg: Layout[] }>({
     lg: defaultLayout,
   });
@@ -42,7 +42,7 @@ const New: React.FC = () => {
 
   const captureSnapshot = async (): Promise<string | undefined> => {
     if (!gridLayoutRef.current) return undefined;
-
+    
     try {
       const canvas = await html2canvas(gridLayoutRef.current, {
         scale: 1,
@@ -209,7 +209,7 @@ const New: React.FC = () => {
                           "#002966",
                         ],
                       }}
-                      rootProps={{ "data-testid": item.i }}
+                      rootProps={{ "data-testid": item.i }} //id of chartcell from layout
                     />
                   )}
                   {item.i === "2" && (

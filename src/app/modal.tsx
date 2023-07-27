@@ -5,12 +5,14 @@ interface ConfirmationModalProps {
   isOpen: boolean;
   onCancel: () => void;
   onConfirm: () => void;
+
 }
 
 const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   isOpen,
   onCancel,
   onConfirm,
+
 }) => {
   if (!isOpen) return null;
 

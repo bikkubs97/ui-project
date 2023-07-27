@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
 import { Responsive, WidthProvider, Layout } from "react-grid-layout";
@@ -15,7 +15,7 @@ const ResponsiveGridLayout = WidthProvider(Responsive);
 interface DashboardData {
   id: string | string[];
   name: string;
-  icon: string;
+  icon?: string;
   date: string;
   layout: { lg: Layout[] };
 }
@@ -76,13 +76,12 @@ const EditDashboard: React.FC = () => {
     saveDashboardData(snapshot);
     alert("Dashboard Updated");
   };
-
-  const captureSnapshot = async (): Promise<string> => {
-    const gridLayoutRef = document.getElementById("grid-layout");
-    if (!gridLayoutRef) return "";
+  const gridLayoutRef = useRef<HTMLDivElement>(null);
+  const captureSnapshot = async (): Promise<string| undefined> => {
+    if (!gridLayoutRef.current) return undefined;
 
     try {
-      const canvas = await html2canvas(gridLayoutRef, {
+      const canvas = await html2canvas(gridLayoutRef.current, {
         scale: 1,
       });
       return canvas.toDataURL("image/png");
@@ -92,7 +91,7 @@ const EditDashboard: React.FC = () => {
     }
   };
 
-  const saveDashboardData = (snapshot: string): void => {
+  const saveDashboardData = (snapshot: string | undefined): void => {
     const sizeData: { [key: string]: { w: number; h: number } } = {};
     gridLayout?.lg.forEach((item) => {
       sizeData[item.i] = { w: item.w, h: item.h };
@@ -103,7 +102,7 @@ const EditDashboard: React.FC = () => {
 
     const dashboardData: DashboardData = {
       id: dashboardId,
-      icon: snapshot,
+      icon: snapshot ,
       name: dashboardName,
       date: formattedDate,
       layout: { lg: gridLayout?.lg || [] },
@@ -118,8 +117,6 @@ const EditDashboard: React.FC = () => {
 
     if (existingDashboardIndex >= 0) {
       savedDashboards[existingDashboardIndex] = dashboardData;
-    } else {
-      savedDashboards.push(dashboardData);
     }
     localStorage.setItem("dashboards", JSON.stringify(savedDashboards));
     localStorage.setItem("cell_sizes", JSON.stringify(sizeData));
@@ -165,7 +162,7 @@ const EditDashboard: React.FC = () => {
         </form>
       </div>
 
-      <div className="flex h-100 w-full justify-center items-center" id="grid-layout">
+      <div className="flex h-100 w-full justify-center items-center" ref={gridLayoutRef}>
         <div className="w-3/4 p-4 mt-4">
           <p>click and drag the bottom-right corners to resize, Click and drag to move</p>
           <div className="w-100 h-80 p-4">
@@ -294,7 +291,7 @@ const EditDashboard: React.FC = () => {
       <ConfirmationModal
         isOpen={showConfirmationModal}
         onCancel={handleCancelDelete}
-        onConfirm={handleConfirmDelete}
+        onConfirm={handleConfirmDelete}    
       />
     </>
   );
