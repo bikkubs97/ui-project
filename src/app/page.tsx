@@ -16,6 +16,7 @@ const Overview : React.FC = () =>  {
   const [data, setData] = useState<DashboardData[]>([]);
   const [isModalOpen, setModalOpen] = useState(false);
   const [deleteRowId, setDeleteRowId] = useState('');
+  const[currentDashboard, setCurrentDashboard]= useState("")
 
   useEffect(() => {
     const savedDashboardsString = localStorage.getItem("dashboards");
@@ -25,7 +26,7 @@ const Overview : React.FC = () =>  {
     }
   }, []);
 
-    const[currentDashboard, setCurrentDashboard]= useState("")
+    
     const deleteRow = (id: string) => {
     setDeleteRowId(id);
     setModalOpen(true);
@@ -36,17 +37,11 @@ const Overview : React.FC = () =>  {
     setDeleteRowId('');
   };
 
-    let filteredData
-
-    if(currentDashboard ===""){
-       filteredData = data    
-    } 
-    else{
-      filteredData = data.filter((row)=>row.name.includes(currentDashboard.toLowerCase()))
-    }
+   
+   const filteredData = data.filter((row)=>row.name.toLowerCase().includes(currentDashboard.toLowerCase()))
     
 
-  const handleConfirmDelete = () => {
+   const handleConfirmDelete = () => {
     const updatedData = data.filter((row) => row.id !== deleteRowId);
     setData(updatedData);
     localStorage.setItem("dashboards", JSON.stringify(updatedData));
