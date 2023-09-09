@@ -126,9 +126,9 @@ const New: React.FC = () => {
 
   return (
     <>
-      <div className="flex w-full bg-blue-950 px-5 py-2">
+      <div className="flex w-full bg-purple-800 px-5 py-2">
         <form onSubmit={handleSaveDashboard} className="flex p-2 w-full">
-          <label htmlFor="name" className="text-white m-2 font-bold mb-2">
+          <label htmlFor="name" className="text-white m-2 pt-1 font-bold mb-2">
             Name
           </label>
           <input
@@ -137,8 +137,8 @@ const New: React.FC = () => {
             id="name"
             name="name"
             required
-            className="border  px-3 focus:outline-none focus:border-blue-500 flex-grow"
-            placeholder="Enter name for your dashboard"
+            className="border  md:px-3 focus:outline-none focus:border-blue-500 flex-grow"
+            placeholder="Enter Name"
           />
           <button
             type="submit"
@@ -161,7 +161,7 @@ const New: React.FC = () => {
         className="flex h-100 justify-center items-center"
         ref={gridLayoutRef}
       >
-        <div className="w-3/4 p-4 mt-4">
+        <div className="md:w-3/4 p-4 md:mt-4">
           <p>
             Click and drag to move, click and drag the bottom-right corners to
             resize

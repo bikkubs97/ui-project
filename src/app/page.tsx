@@ -56,27 +56,27 @@ const Overview : React.FC = () =>  {
   
   return (
     <>
-      <h1 className="text-4xl text-white bg-blue-900 p-4">
+      <h1 className="text-4xl text-white bg-purple-900 p-4">
         Welcome to Dashboards!
       </h1>
-      <h2 className="text-3xl pt-1 font-light p-4">Overview</h2>
+      <h2 className="text-3xl pt-1 font-light p-4 ">Overview</h2>
       <input
             type="text"
             id="name"
             name="name"
-            className="border py-2 px-3 mb-4 focus:outline-none focus:border-blue-500 flex-grow text-center"
+            className="border py-2 px-3 mb-4 w-1/2 focus:outline-none rounded-md border-purple-500 flex-grow text-center"
             placeholder="Serach Dashbords"
             value={currentDashboard}
             onChange={(e) => setCurrentDashboard(e.target.value)}
             required
           />
       <div className="flex justify-center align-center h-full">
-        <table className="w-3/4 text  border-collapse border border-blue-500 bg-white mx-5">
+        <table className="w-3/4 text  border-collapse border border-purple-500 bg-white mx-5">
           <thead>
-            <tr className="bg-blue-200">
-              <th className="px-4 py-2 text-blue-800">Icon</th>
-              <th className="px-4 py-2 text-blue-800">Dashboard Name</th>
-              <th className="px-4 py-2 text-blue-800">Date</th>
+            <tr className="bg-purple-200">
+              <th className="px-4 py-2 text-black">Icon</th>
+              <th className="px-4 py-2 text-black">Dashboard Name</th>
+              <th className="px-4 py-2 text-black">Date</th>
               <th></th>
               <th></th>
             </tr>
@@ -110,7 +110,7 @@ const Overview : React.FC = () =>  {
         </table>
       </div>
       <Link href="/new">
-        <button className="mt-10 px-4 py-2 bg-blue-600 hover:bg-blue-800 text-white rounded-md">
+        <button className="mt-10 px-4 py-2 bg-purple-600 hover:bg-800 text-white rounded-md">
           Add New Dashboard
         </button>
       </Link>

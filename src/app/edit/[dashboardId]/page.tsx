@@ -128,7 +128,7 @@ const EditDashboard: React.FC = () => {
 
   return (
     <>
-      <div className="w-full bg-blue-950 px-5 py-2">
+      <div className="w-full bg-purple-800 md:px-5 md:py-2">
         <form onSubmit={(e) => e.preventDefault()} className="flex p-2 w-full">
           <label htmlFor="name" className="text-white m-2 font-bold mb-2">
             Name
@@ -163,7 +163,7 @@ const EditDashboard: React.FC = () => {
       </div>
 
       <div className="flex h-100 w-full justify-center items-center" ref={gridLayoutRef}>
-        <div className="w-3/4 p-4 mt-4">
+        <div className="md:w-3/4 p-4 mt-4">
           <p>click and drag the bottom-right corners to resize, Click and drag to move</p>
           <div className="w-100 h-80 p-4">
             <ResponsiveGridLayout
